@@ -1,0 +1,23 @@
+{
+  "name": "playwright-bdd-template",
+  "version": "1.0.0",
+  "description": "BDD Playwright automation template — BDD + POM + TypeScript",
+  "scripts": {
+    "bddgen": "npx bddgen",
+    "test": "npx playwright test --headed",
+    "testless": "npx playwright test",
+    "tag": "npx playwright test --grep",
+    "zip": "node zip-report.js"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.2.0",
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.13.1",
+    "playwright": "^1.51.1",
+    "playwright-bdd": "^8.2.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bdd-playwright-core": "file:../bdd-playwright-core"
+  }
+}

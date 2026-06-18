@@ -1,0 +1,9 @@
+node_modules/
+.features-gen/
+playwright-report/
+playwright-report.zip
+test-results/
+test-results.json
+custom-test-results.xlsx
+.env
+*.env
