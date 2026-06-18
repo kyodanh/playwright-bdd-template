@@ -1,9 +1,14 @@
 import { createBaseConfig } from 'bdd-playwright-core';
+import { defineBddConfig } from 'playwright-bdd';
 import { config } from './config/test-config';
 
 // LAYER 4 — Config được nạp từ ./config/test-config (đọc .env.<TEST_ENV>).
 // baseURL + browser channel lấy từ config => đổi môi trường không cần sửa file này.
 module.exports = createBaseConfig({
+  testDir: defineBddConfig({
+    features: 'tests/features/**/*.feature',
+    steps: 'tests/steps/**/*.steps.ts',
+  }),
   use: {
     baseURL: config.baseURL,
     trace: 'retain-on-failure',

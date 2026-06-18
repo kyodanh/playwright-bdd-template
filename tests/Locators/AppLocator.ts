@@ -11,11 +11,12 @@ export function getLocators() {
       errorText:     ".error-message",
     },
 
-    // TODO: Thêm locator cho các module khác tại đây
-    // exampleLocators: {
-    //   searchInput: "id=search",
-    //   submitButton: { role: 'button' as const, name: 'Tìm kiếm' },
-    // },
+    dashboardLocators: {
+      pageTitle:      "h1",
+      userMenuButton: { role: 'button' as const, name: 'Tài khoản' },
+      logoutButton:   { role: 'menuitem' as const, name: 'Đăng xuất' },
+      welcomeText:    ".welcome-message",
+    },
 
   } as const;
 }

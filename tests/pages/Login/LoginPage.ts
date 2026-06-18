@@ -14,6 +14,7 @@ const GLOBAL_CONSTANTS = {
 
 // url lấy từ Config Layer (baseURL + loginPath) — không truyền từ feature.
 async function openAndLogin(page: Page, username: string, password: string) {
+  await page.context().clearCookies();
   await page.goto(config.loginPath);
   await page.waitForLoadState('domcontentloaded');
 
