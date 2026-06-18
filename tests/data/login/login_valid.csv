@@ -1,0 +1,4 @@
+username,password,expected_page
+admin,Admin@123,dashboard
+manager,Manager@123,dashboard
+viewer,Viewer@123,home

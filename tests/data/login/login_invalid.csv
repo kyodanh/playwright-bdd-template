@@ -1,0 +1,5 @@
+case,username,password,error_message
+sai mật khẩu,admin,wrongpass,Tên đăng nhập hoặc mật khẩu không đúng
+mật khẩu trống,admin,,Vui lòng nhập mật khẩu
+tài khoản trống,,Admin@123,Vui lòng nhập tên đăng nhập
+tài khoản không tồn tại,hacker,hack123,Tài khoản không tồn tại

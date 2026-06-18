@@ -1,0 +1,17 @@
+{
+  // Cucumber (by Cucumber) extension
+  "cucumber.features": [
+    "tests/features/**/*.feature"
+  ],
+  "cucumber.glue": [
+    "tests/steps/**/*.ts"
+  ],
+
+  // Cucumber (Gherkin) Full Support extension (Alexander Krechik)
+  "cucumberautocomplete": {
+    "steps": [
+      "tests/steps/**/*.ts"
+    ],
+    "strictGherkinCompletion": false
+  }
+}
