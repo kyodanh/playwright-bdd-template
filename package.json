@@ -14,10 +14,11 @@
     "@playwright/test": "^1.51.0",
     "@types/node": "^22.13.1",
     "playwright": "^1.51.1",
-    "playwright-bdd": "^8.2.0",
+    "playwright-bdd": "^9.1.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "bdd-playwright-core": "file:../bdd-playwright-core"
+    "bdd-playwright-core": "file:../bdd-playwright-core",
+    "dotenv": "16.6.1"
   }
 }

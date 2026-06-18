@@ -27,22 +27,28 @@ Core utilities được cung cấp sẵn qua package `bdd-playwright-core`.
 playwright-bdd-template/
 │
 ├── tests/
-│   ├── features/               # LAYER 1 — Kịch bản Gherkin (.feature)
+│   ├── features/               # LAYER 1 — Test case (Gherkin .feature, dễ đọc)
 │   │   └── 1.Login/            # Nhóm theo module
 │   │
-│   ├── steps/                  # LAYER 2 — Step Definitions
+│   ├── steps/                  # cầu nối Gherkin → Page Object
 │   │   └── Login/
 │   │
-│   ├── pages/                  # LAYER 3 — Page Objects
+│   ├── pages/                  # LAYER 2 — POM (Page Objects)
 │   │   └── Login/
+│   │   └── ../Locators/AppLocator.ts   # locators tập trung (thuộc POM)
 │   │
-│   └── Locators/               # LAYER 4 — Locators tập trung
-│       └── AppLocator.ts
+│                               # LAYER 3 — Utility: import từ package bdd-playwright-core
+│
+├── config/                     # LAYER 4 — Config (env + credentials tách khỏi code)
+│   └── test-config.ts
+├── .env.example                #   mẫu cấu hình (commit)
+├── .env.dev / .env.staging     #   cấu hình theo môi trường (gitignore)
+│
+├── playwright-report/          # LAYER 5 — Report (html/json/xlsx + email)
 │
 ├── .features-gen/              # Auto-generated bởi bddgen — KHÔNG sửa tay
 ├── file_upload/                # File đính kèm dùng trong test
-├── docs/                       # Tài liệu dự án
-├── .github/workflows/          # CI/CD GitHub Actions
+├── .github/workflows/          # CI/CD GitHub Actions (Chromium)
 ├── playwright.config.ts
 ├── tsconfig.json
 └── zip-report.js
@@ -61,8 +67,35 @@ npm install
 npx playwright install
 ```
 
-### 3. Cấu hình URL & credentials
-Mở file `tests/features/` → thay `https://your-app.com/login` và thông tin đăng nhập trong `Examples`.
+### 3. Cấu hình môi trường & credentials (Config Layer)
+URL và tài khoản **không nằm trong feature file** — chúng được tách ra Config Layer (`.env.<env>` + `config/test-config.ts`).
+
+```bash
+# Copy file mẫu rồi điền giá trị thật (file .env.* đã được .gitignore)
+cp .env.example .env.dev
+```
+
+```dotenv
+# .env.dev
+BASE_URL=https://your-app.com
+LOGIN_PATH=/login
+BROWSER_CHANNEL=msedge          # local dùng Edge; để trống = Chromium (cho CI)
+ACCOUNT_ADMIN_USERNAME=admin@gmail.com
+ACCOUNT_ADMIN_PASSWORD=Admin@123
+```
+
+Đổi môi trường chỉ cần đổi biến `TEST_ENV` — **không sửa code, không sửa .feature**:
+
+```bash
+TEST_ENV=dev      npm test     # nạp .env.dev (mặc định)
+TEST_ENV=staging  npm test     # nạp .env.staging
+```
+
+Trong feature file chỉ tham chiếu **tên tài khoản logic**, credentials do Config Layer cấp:
+
+```gherkin
+Given User đăng nhập với tài khoản "admin"   # -> ACCOUNT_ADMIN_* trong .env
+```
 
 ### 4. Thêm module mới
 ```
@@ -135,7 +168,17 @@ const locators = getLocators();
 const GLOBAL_CONSTANTS = { sharedValue: '' };
 
 async function doSomething(page: Page, val1: string, val2: string) {
-  await page.locator(locators.exampleLocators.searchInput).fill(val1);
+  // Dùng biến trung gian — không gọi locator trực tiếp 2 lần
+  const searchInput = page.locator(locators.exampleLocators.searchInput);
+
+  // Chờ element sẵn sàng trước khi tương tác
+  await searchInput.waitFor({ state: 'visible' });
+
+  // Kiểm tra trạng thái trước khi fill/click
+  if (!(await searchInput.isDisabled())) {
+    await searchInput.fill(val1);
+  }
+
   GLOBAL_CONSTANTS.sharedValue = val1;
 }
 
@@ -144,6 +187,46 @@ async function verifyResult(page: Page, message: string) {
 }
 
 export default { doSomething, verifyResult, GLOBAL_CONSTANTS };
+```
+
+### Chiến lược Wait — Tránh `waitForTimeout`
+
+| Phương thức | Khi nào dùng |
+|---|---|
+| `waitForLoadState('domcontentloaded')` | Sau `page.goto()` — DOM xong, chưa cần asset |
+| `waitForLoadState('networkidle')` | Sau click/submit — chờ API response hoàn tất |
+| `element.waitFor({ state: 'visible' })` | Chờ một element cụ thể xuất hiện |
+| `page.waitForURL('/path')` | Chờ redirect đến URL đích |
+| `waitForTimeout(ms)` | **Tránh dùng** — sleep cứng, dễ gây flaky test |
+
+```typescript
+// ❌ Tránh — sleep cứng không đảm bảo
+await page.waitForTimeout(2000);
+
+// ✅ Dùng — chờ đúng điều kiện thực tế
+await page.waitForLoadState('networkidle');
+await submitButton.waitFor({ state: 'visible' });
+await page.waitForURL('/dashboard');
+```
+
+### Kiểm tra trạng thái element trước khi tương tác
+
+```typescript
+const input = page.locator("input[name='username']");
+
+// Chờ visible
+await input.waitFor({ state: 'visible' });
+
+// Chỉ fill/click nếu không bị disabled
+if (!(await input.isDisabled())) {
+  await input.fill(value);
+}
+
+// Chỉ click nếu button enabled và visible
+const btn = page.getByRole('button', { name: 'Lưu' });
+if (await btn.isVisible() && !(await btn.isDisabled())) {
+  await btn.click();
+}
 ```
 
 ---

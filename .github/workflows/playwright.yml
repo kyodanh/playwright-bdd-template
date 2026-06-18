@@ -19,14 +19,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Chỉ cài Chromium — chạy ổn định trên ubuntu-latest.
+      # (Không dùng channel 'msedge' trên CI: Edge không có sẵn trên Linux runner.)
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium
 
       - name: Generate BDD specs
         run: npm run bddgen
 
       - name: Run Playwright tests
         run: npm run testless
+        env:
+          TEST_ENV: ci
+          # BROWSER_CHANNEL rỗng -> dùng Chromium (xem playwright.config.ts / config layer)
+          BROWSER_CHANNEL: ''
+          # Cấu hình + credentials inject từ GitHub Secrets/Vars (không commit secrets).
+          # Có fallback giá trị demo để template chạy được ngay khi chưa cấu hình.
+          BASE_URL: ${{ vars.BASE_URL || 'https://qassit.pages.dev' }}
+          LOGIN_PATH: ${{ vars.LOGIN_PATH || '/' }}
+          ACCOUNT_ADMIN_USERNAME: ${{ secrets.ACCOUNT_ADMIN_USERNAME || 'admin@gmail.com' }}
+          ACCOUNT_ADMIN_PASSWORD: ${{ secrets.ACCOUNT_ADMIN_PASSWORD || 'Admin@123' }}
 
       - name: Upload report
         uses: actions/upload-artifact@v4

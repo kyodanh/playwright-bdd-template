@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/playwright-bdd-template/tests/utils)",
+      "Bash(mv /Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/playwright-bdd-template/ErrorHandler.ts /Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/playwright-bdd-template/tests/utils/ErrorHandler.ts)",
+      "Bash(node -e \"const { createBaseConfig } = require\\('bdd-playwright-core'\\); console.log\\('OK:', typeof createBaseConfig\\);\")",
+      "Bash(npx bddgen *)",
+      "Bash(NODE_OPTIONS=--preserve-symlinks npx bddgen)",
+      "Bash(node -e ' *)",
+      "Bash(/Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/node_modules/.bin/bddgen)",
+      "Bash(node -e \"console.log\\(require\\('/Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/node_modules/playwright/package.json'\\).version\\)\")",
+      "Bash(PLAYWRIGHT_BDD_CONFIGS_DEBUG=1 npx bddgen --verbose)",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('main:', p.get\\('main'\\)\\); print\\('bin:', p.get\\('bin'\\)\\); print\\('version:', p.get\\('version'\\)\\)\")",
+      "Bash(npm view *)",
+      "Bash(python3 -c \"import json,sys; vs=json.load\\(sys.stdin\\); print\\('\\\\n'.join\\(vs[-10:]\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; vs=json.load\\(sys.stdin\\); recent=[v for v in vs if v.startswith\\('1.5'\\)]; print\\('\\\\n'.join\\(recent[-5:]\\)\\)\")",
+      "Bash(node -e \"console.log\\(require\\('/Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/node_modules/playwright-bdd/package.json'\\).version\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); pbd=d.get\\('packages',{}\\).get\\('node_modules/playwright-bdd',{}\\); print\\('locked version:', pbd.get\\('version','not found'\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); pbd=d.get\\('packages',{}\\).get\\('node_modules/playwright-bdd',{}\\); print\\('root lock version:', pbd.get\\('version','not found'\\)\\)\")",
+      "Bash(npm update *)",
+      "Bash(python3 -c ' *)",
+      "Bash(mkdir -p /Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/bdd-playwright-core/node_modules)",
+      "Bash(ln -sf ../../playwright-bdd-template/node_modules/playwright-bdd playwright-bdd)",
+      "Bash(ln -sf ../../playwright-bdd-template/node_modules/@playwright @playwright)",
+      "Bash(ln -sf ../../playwright-bdd-template/node_modules/playwright playwright)",
+      "Bash(ln -sf ../../playwright-bdd-template/node_modules/playwright-core playwright-core)",
+      "Bash(ln -sf ../../node_modules/playwright playwright)",
+      "Bash(ln -sf ../../node_modules/playwright-core playwright-core)",
+      "Bash(PLAYWRIGHT_BDD_CONFIGS_DEBUG=1 node -e ' *)",
+      "Bash(npx which *)",
+      "Bash(npx --yes bddgen --version)",
+      "Bash(node /Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/playwright-bdd-template/node_modules/playwright-bdd/dist/cli/index.js)",
+      "Bash(node /Users/dannymacmini/Desktop/MacMini_Cty/Work_Auto/playwright-bdd-template/node_modules/playwright-bdd/dist/cli/index.js test)",
+      "Bash(TEST_ENV=dev node -e \"const {config,getUser}=require\\('./config/test-config.ts'\\); \")",
+      "Bash(TEST_ENV=ci BROWSER_CHANNEL='' BASE_URL='https://qassit.pages.dev' ACCOUNT_ADMIN_USERNAME='admin@gmail.com' ACCOUNT_ADMIN_PASSWORD='Admin@123' npx playwright test --list)",
+      "Bash(TEST_ENV=dev BROWSER_CHANNEL='' npx playwright test --reporter=list)"
+    ]
+  }
+}

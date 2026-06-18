@@ -6,4 +6,6 @@ test-results/
 test-results.json
 custom-test-results.xlsx
 .env
+.env.*
 *.env
+!.env.example

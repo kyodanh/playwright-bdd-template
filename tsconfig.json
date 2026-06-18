@@ -2,15 +2,18 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "lib": ["ES2020"],
+    "lib": ["ES2020", "DOM"],
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "baseUrl": "."
+    "paths": {
+      "@config/*": ["./config/*"]
+    }
   },
   "include": [
     "tests/**/*.ts",
+    "config/**/*.ts",
     "playwright.config.ts"
   ],
   "exclude": ["node_modules", ".features-gen"]
