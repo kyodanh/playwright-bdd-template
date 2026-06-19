@@ -1,7 +1,6 @@
 # Playwright BDD Template
 
-Framework kiểm thử tự động với **Playwright + BDD (Cucumber/Gherkin) + POM + TypeScript**.  
-Core utilities được cung cấp sẵn qua package [`bdd-playwright-core`](https://github.com/kyodanh/bdd-playwright-core).
+Framework kiểm thử tự động với **Playwright + BDD (Cucumber/Gherkin) + POM + TypeScript**.
 
 ---
 
@@ -25,7 +24,7 @@ cd ten-project-cua-ban
 npm run setup
 ```
 
-> `npm run setup` tự động: clone `bdd-playwright-core`, cài dependencies, cài Playwright browsers, tạo `.env.dev`.  
+> `npm run setup` tự động: cài dependencies, cài Playwright browsers (Chromium), tạo `.env.dev`.  
 > Sau đó chỉ cần điền thông tin vào `.env.dev` rồi chạy `npm run bddgen && npm test`.
 
 ---
@@ -38,7 +37,6 @@ npm run setup
 |---|---|---|
 | Node.js | 18 LTS trở lên | Kiểm tra: `node -v` |
 | npm | 9 trở lên | Đi kèm Node.js |
-| Git | bất kỳ | Cần clone bdd-playwright-core |
 | Microsoft Edge | bất kỳ | Chỉ cần khi chạy local với `BROWSER_CHANNEL=msedge` |
 
 ### VS Code Extensions (khuyến nghị)
