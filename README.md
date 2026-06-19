@@ -9,23 +9,36 @@ Framework kiểm thử tự động với **Playwright + BDD (Cucumber/Gherkin) 
 ### Cách 1 — GitHub Template (khuyến nghị)
 
 1. Nhấn **"Use this template"** → **"Create a new repository"** trên trang này
-2. Clone repo vừa tạo về máy
-3. Chạy setup:
+2. Đặt tên repo mới → **Create repository**
+3. Clone repo vừa tạo về máy và cài đặt:
 
 ```bash
-npm run setup
+git clone https://github.com/<your-org>/<new-repo>.git
+cd <new-repo>
+npm install
+npx playwright install --with-deps chromium
+cp .env.example .env
 ```
 
-### Cách 2 — degit (không cần GitHub account)
+4. Mở `.env`, điền `BASE_URL` và credentials thật của dự án
+5. Chạy test:
 
 ```bash
-npx degit kyodanh/playwright-bdd-template ten-project-cua-ban
-cd ten-project-cua-ban
-npm run setup
+npm run bddgen
+npm test
+```
+
+---
+
+### Cách 2 — degit (nhanh, không cần GitHub account)
+
+```bash
+npx degit kyodanh/playwright-bdd-template my-project
+cd my-project && npm run setup
 ```
 
 > `npm run setup` tự động: cài dependencies, cài Playwright browsers (Chromium), tạo `.env.dev`.  
-> Sau đó chỉ cần điền thông tin vào `.env.dev` rồi chạy `npm run bddgen && npm test`.
+> Mở `.env.dev`, điền `BASE_URL` và credentials thật, rồi chạy `npm run bddgen && npm test`.
 
 ---
 
@@ -48,18 +61,6 @@ npm run setup
 
 > Cả hai extension đều đọc config từ `.vscode/settings.json` — đã được commit vào repo, không cần setup thêm.
 
-### Workspace structure
-
-`bdd-playwright-core` phải nằm **cùng cấp** với project (script setup tự clone):
-
-```
-MyProject/
-├── bdd-playwright-core/     ← package dùng chung (setup tự clone)
-├── playwright-bdd-template/ ← template gốc (repo này)
-├── project-A/               ← dự án A (clone từ template)
-└── project-B/               ← dự án B (clone từ template)
-```
-
 ---
 
 ## Tech Stack
@@ -70,7 +71,6 @@ MyProject/
 | Test Runner | Playwright ^1.51.0 |
 | BDD Bridge | playwright-bdd ^9.1.0 |
 | BDD Framework | @cucumber/cucumber ^11.2.0 |
-| Core Utilities | bdd-playwright-core (local) |
 | Browser (local) | Microsoft Edge |
 | Browser (CI) | Chromium |
 | CI/CD | GitHub Actions |
