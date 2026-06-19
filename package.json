@@ -20,7 +20,6 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "bdd-playwright-core": "file:../bdd-playwright-core",
     "dotenv": "16.6.1"
   }
 }

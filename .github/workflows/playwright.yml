@@ -1,10 +1,54 @@
 name: Playwright Tests
 
+# ============================================================
+# TRIGGER: Khi nào CI tự chạy?
+# ============================================================
+# - Push lên branch main       → chạy toàn bộ test
+# - Tạo Pull Request vào main  → chạy toàn bộ test
+# - Chạy tay (workflow_dispatch) → chọn tag / feature / scenario cụ thể
+#
+# TODO: Muốn thêm branch khác (vd: develop) thì sửa dòng branches bên dưới.
+# ============================================================
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
+  # ── Chạy tay từ GitHub UI ────────────────────────────────────
+  # GitHub → Actions → "Playwright Tests" → Run workflow
+  # Chỉ điền MỘT trong 3 ô bên dưới, ưu tiên theo thứ tự:
+  #   1. scenario  (chính xác nhất)
+  #   2. tags      (theo nhóm)
+  #   3. Để trống  → chạy toàn bộ
+  # ────────────────────────────────────────────────────────────
+  workflow_dispatch:
+    inputs:
+
+      scenario:
+        description: |
+          Tên scenario cần chạy (khớp một phần cũng được). Ví dụ:
+            Đăng nhập thành công với tài khoản hợp lệ   → chạy TC01
+            Đăng nhập nhiều tài khoản từ CSV             → chạy TC02
+            Đăng nhập thất bại với dữ liệu sai           → chạy TC03
+            Đăng nhập thành công với tài khoản           → chạy TC04 (Outline)
+            Đăng nhập thất bại —                         → chạy TC05 (Outline)
+          Để trống → bỏ qua, xét tiếp ô tags.
+        required: false
+        default: ''
+
+      tags:
+        description: |
+          Tag nhóm test cần chạy. Ví dụ:
+            @smoke              → TC01 TC02 TC04 (login thành công)
+            @negative           → TC03 TC05 (login thất bại)
+            @csv                → TC02 TC03 (đọc data từ CSV)
+            @outline            → TC04 TC05 (Scenario Outline)
+            @login              → toàn bộ Login feature
+            @login and @smoke   → giao nhau (AND)
+          Để trống → chạy toàn bộ test.
+        required: false
+        default: ''
 
 jobs:
   test:
@@ -27,19 +71,89 @@ jobs:
       - name: Generate BDD specs
         run: npm run bddgen
 
+      # ============================================================
+      # BƯỚC CHẠY TEST
+      # ============================================================
+      #
+      # ── 3 CÁCH CHỌN TEST CẦN CHẠY ───────────────────────────────
+      #
+      #   CÁCH 1 — Theo tên Scenario (chính xác nhất):
+      #     → Điền ô "scenario" khi Run workflow trên GitHub UI
+      #     → Local: npm run tag -- "tên scenario"
+      #
+      #     Danh sách Scenario hiện có:
+      #       "Đăng nhập thành công với tài khoản hợp lệ"   → TC01
+      #       "Đăng nhập nhiều tài khoản từ CSV"             → TC02
+      #       "Đăng nhập thất bại với dữ liệu sai từ CSV"   → TC03
+      #       "Đăng nhập thành công với tài khoản"          → TC04 (Outline, khớp partial)
+      #       "Đăng nhập thất bại —"                        → TC05 (Outline, khớp partial)
+      #
+      #   CÁCH 2 — Theo Tag (chạy cả nhóm):
+      #     → Điền ô "tags" khi Run workflow trên GitHub UI
+      #     → Local: npm run tag -- @smoke
+      #
+      #     Tags hiện có:
+      #       @smoke    → TC01 TC02 TC04   (happy-path, login thành công)
+      #       @negative → TC03 TC05        (login thất bại)
+      #       @csv      → TC02 TC03        (đọc data từ file CSV)
+      #       @outline  → TC04 TC05        (Scenario Outline)
+      #       @login    → TC01~TC05        (toàn bộ Login feature)
+      #
+      #     Kết hợp AND:  @login and @smoke   → giao nhau
+      #     Kết hợp OR:   @smoke|@negative    → hợp nhau
+      #
+      #   CÁCH 3 — Chạy toàn bộ:
+      #     → Để trống cả 2 ô khi Run workflow
+      #     → Push/PR lên main → tự động chạy hết
+      #     → Local: npm run testless (headless) / npm test (có browser)
+      #
+      # ── KẾT QUẢ TEST xem ở đâu? ────────────────────────────────
+      #
+      #   Realtime : GitHub Actions → job "test" → log từng step
+      #   HTML report: tab Artifacts → tải "playwright-report"
+      #                → giải nén → mở index.html
+      #   Local    : npx playwright show-report
+      #
+      # TODO: Thêm feature mới → tạo file .feature trong tests/features/
+      #       Thêm tag mới     → khai báo @tagName trước Scenario trong .feature
+      # ============================================================
       - name: Run Playwright tests
-        run: npm run testless
+        run: |
+          if [ -n "${{ github.event.inputs.scenario }}" ]; then
+            echo "▶ Chạy scenario: ${{ github.event.inputs.scenario }}"
+            npx playwright test --grep "${{ github.event.inputs.scenario }}"
+          elif [ -n "${{ github.event.inputs.tags }}" ]; then
+            echo "▶ Chạy tag: ${{ github.event.inputs.tags }}"
+            npx playwright test --grep "${{ github.event.inputs.tags }}"
+          else
+            echo "▶ Chạy toàn bộ test"
+            npm run testless
+          fi
         env:
           TEST_ENV: ci
           # BROWSER_CHANNEL rỗng -> dùng Chromium (xem playwright.config.ts / config layer)
           BROWSER_CHANNEL: ''
-          # Cấu hình + credentials inject từ GitHub Secrets/Vars (không commit secrets).
-          # Có fallback giá trị demo để template chạy được ngay khi chưa cấu hình.
+          # ── TODO: Cấu hình môi trường & credentials ─────────────
+          # Khai báo tại: GitHub repo → Settings → Secrets and variables → Actions
+          #
+          #   Variables (không nhạy cảm):
+          #     BASE_URL   = https://your-app.com
+          #     LOGIN_PATH = /login
+          #
+          #   Secrets (nhạy cảm, ẩn trong log):
+          #     ACCOUNT_ADMIN_USERNAME = admin@company.com
+          #     ACCOUNT_ADMIN_PASSWORD = YourRealPassword
+          #
+          #   Nếu chưa khai báo → dùng fallback demo bên dưới (chạy được ngay).
+          # ────────────────────────────────────────────────────────
           BASE_URL: ${{ vars.BASE_URL || 'https://qassit.pages.dev' }}
           LOGIN_PATH: ${{ vars.LOGIN_PATH || '/' }}
           ACCOUNT_ADMIN_USERNAME: ${{ secrets.ACCOUNT_ADMIN_USERNAME || 'admin@gmail.com' }}
           ACCOUNT_ADMIN_PASSWORD: ${{ secrets.ACCOUNT_ADMIN_PASSWORD || 'Admin@123' }}
 
+      # ── Xem kết quả test ────────────────────────────────────────
+      # HTML report được upload sau mỗi lần chạy (kể cả khi test fail).
+      # Vào tab "Artifacts" của job này để tải về và mở index.html.
       - name: Upload report
         uses: actions/upload-artifact@v4
         if: always()

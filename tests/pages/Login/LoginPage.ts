@@ -1,5 +1,4 @@
 import { Page, expect, Response } from '@playwright/test';
-import { checkSuccessMessage, checkErrorMessage } from 'bdd-playwright-core';
 import { getLocators } from '../../Locators/AppLocator';
 import { config } from '../../../config/test-config';
 
@@ -41,7 +40,7 @@ async function verifyLoginSuccess(page: Page) {
 }
 
 async function verifyLoginError(page: Page, message: string) {
-  await checkErrorMessage(page, message);
+  await expect(page.getByText(message)).toBeVisible({ timeout: 10000 });
 }
 
 // // =============================================================================
