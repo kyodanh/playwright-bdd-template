@@ -32,9 +32,18 @@ npm test
 
 ### Cách 2 — degit (nhanh, không cần GitHub account)
 
+**macOS / Linux:**
 ```bash
 npx degit kyodanh/playwright-bdd-template my-project
-cd my-project && npm run setup
+cd my-project
+npm run setup
+```
+
+**Windows (PowerShell / CMD):**
+```powershell
+npx degit kyodanh/playwright-bdd-template my-project
+cd my-project
+npm run setup
 ```
 
 > `npm run setup` tự động: cài dependencies, cài Playwright browsers (Chromium), tạo `.env.dev`.  

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "BDD Playwright automation template — BDD + POM + TypeScript",
   "scripts": {
-    "setup": "bash scripts/setup.sh",
+    "setup": "node scripts/setup.js",
     "gen:examples": "node scripts/genExamples.js",
     "bddgen": "npm run gen:examples && npx bddgen",
     "test": "npx playwright test --headed",
